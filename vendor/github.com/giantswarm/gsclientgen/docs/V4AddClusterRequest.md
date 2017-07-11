@@ -3,6 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Id** | **string** | ID of the new cluster | [optional] [default to null]
 **Owner** | **string** | Name of the organization owning the cluster | [default to null]
 **Name** | **string** | Cluster name | [optional] [default to null]
 **KubernetesVersion** | **string** | Kubernetes version number | [optional] [default to null]

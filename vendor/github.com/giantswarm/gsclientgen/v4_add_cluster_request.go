@@ -13,6 +13,9 @@ package gsclientgen
 // Request model for creating a new cluster
 type V4AddClusterRequest struct {
 
+	// ID of the new cluster
+	Id string `json:"id,omitempty"`
+
 	// Name of the organization owning the cluster
 	Owner string `json:"owner"`
 

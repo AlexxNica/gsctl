@@ -466,6 +466,9 @@ definitions:
       - owner
     description: Request model for creating a new cluster
     properties:
+      id:
+        type: string
+        description: ID of the new cluster
       owner:
         type: string
         description: Name of the organization owning the cluster

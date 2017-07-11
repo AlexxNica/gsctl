@@ -38,6 +38,7 @@ type nodeDefinition struct {
 }
 
 type clusterDefinition struct {
+	ID                string           `yaml:"id,omitempty"`
 	Name              string           `yaml:"name,omitempty"`
 	Owner             string           `yaml:"owner,omitempty"`
 	KubernetesVersion string           `yaml:"kubernetes_version,omitempty"`
@@ -48,6 +49,7 @@ type clusterDefinition struct {
 // (and optionally available) for creating a cluster
 type addClusterArguments struct {
 	apiEndpoint         string
+	clusterID           string
 	clusterName         string
 	dryRun              bool
 	inputYAMLFile       string
@@ -64,6 +66,7 @@ type addClusterArguments struct {
 func defaultAddClusterArguments() addClusterArguments {
 	return addClusterArguments{
 		apiEndpoint:         cmdAPIEndpoint,
+		clusterID:           cmdClusterID,
 		clusterName:         cmdClusterName,
 		dryRun:              cmdDryRun,
 		inputYAMLFile:       cmdInputYAMLFile,
@@ -149,6 +152,8 @@ Examples:
 
 func init() {
 	CreateClusterCommand.Flags().StringVarP(&cmdInputYAMLFile, "file", "f", "", "Path to a cluster definition YAML file")
+
+	CreateClusterCommand.Flags().StringVarP(&cmdClusterID, "cluster", "c", "", "Cluster ID (opational & dangerous)")
 	CreateClusterCommand.Flags().StringVarP(&cmdClusterName, "name", "", "", "Cluster name")
 	CreateClusterCommand.Flags().StringVarP(&cmdKubernetesVersion, "kubernetes-version", "", "", "Kubernetes version of the cluster")
 	CreateClusterCommand.Flags().StringVarP(&cmdOwner, "owner", "", "", "Organization to own the cluster")
@@ -326,6 +331,9 @@ func unmarshalDefinition(data []byte, myDef clusterDefinition) (clusterDefinitio
 // overwrites some settings given via flags.
 // Note that only a few attributes can be overridden by flags.
 func enhanceDefinitionWithFlags(def *clusterDefinition, args addClusterArguments) {
+	if args.clusterID != "" {
+		def.ID = args.clusterID
+	}
 	if args.clusterName != "" {
 		def.Name = args.clusterName
 	}
@@ -341,6 +349,9 @@ func enhanceDefinitionWithFlags(def *clusterDefinition, args addClusterArguments
 // flags/arguments the user has given
 func createDefinitionFromFlags(args addClusterArguments) clusterDefinition {
 	def := clusterDefinition{}
+	if args.clusterID != "" {
+		def.ID = args.clusterID
+	}
 	if args.clusterName != "" {
 		def.Name = args.clusterName
 	}
@@ -373,6 +384,7 @@ func createDefinitionFromFlags(args addClusterArguments) clusterDefinition {
 // creates a gsclientgen.V4AddClusterRequest from clusterDefinition
 func createAddClusterBody(d clusterDefinition) gsclientgen.V4AddClusterRequest {
 	a := gsclientgen.V4AddClusterRequest{}
+	a.Id = d.ID
 	a.Name = d.Name
 	a.Owner = d.Owner
 	a.KubernetesVersion = d.KubernetesVersion
